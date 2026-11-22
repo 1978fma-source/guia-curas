@@ -307,7 +307,7 @@
   <section id="catalogo" class="section active">
     <div class="card">
       <h2>Buscar por término técnico o coloquial</h2>
-      <input type="text" id="buscador" class="search-box" placeholder="Ej: colagenasa, plata, yodo, come tejido, chupa exudado, bordes..." oninput="renderCatalogo()">
+      <input type="text" id="buscador" class="search-box" placeholder="Ej: colagenasa, plata, allevyn, alginato, silvederma, alcohol..." oninput="renderCatalogo()">
       <div class="filter-row" id="filtros-cat"></div>
       <div id="lista-productos"></div>
     </div>
@@ -348,13 +348,63 @@
 </div>
 
 <script>
-  /* =========================================================================
-     BLOQUE MODULAR DE DATOS (Editable y ampliable sin tocar la interfaz)
-     ========================================================================= */
-
   const CATEGORIAS = ["Todos", "Desbridantes", "Antisépticos / Plata", "Apósitos", "Bordes y piel"];
 
   const PRODUCTOS = [
+    {
+      id: "allevyn_life",
+      nombre: "Allevyn Life (apósito hidrocelular/espuma con borde)",
+      categoria: "Apósitos",
+      coloquial: "“El apósito con borde de espuma”, “el cuadradito con margen”, “el de exudado moderado/alto”",
+      paraQue: "Absorber y retener exudado de heridas moderadas a abundantes y aportar amortiguación/protección frente a presión o roce (p. ej. formato 15,4 x 15,4 cm).",
+      evitarCuando: "Evitar aplicarlo sobre heridas secas sin exudado o encima de cremas/pomadas grasas que reduzcan la adherencia del borde o bloqueen la absorción.",
+      comoUsar: "Limpiar y secar bien la piel perilesional; elegir un tamaño que supere el lecho en varios centímetros y adaptar a la zona anatómica."
+    },
+    {
+      id: "alginato",
+      nombre: "Apósito de alginato (alginato cálcico/sódico)",
+      categoria: "Apósitos",
+      coloquial: "“El alginato”, “el que gelifica con exudado”, “la compresa de algas”",
+      paraQue: "Alta capacidad de absorción en heridas con exudado moderado a abundante, cavidades o sangrado leve superficial al formar gel.",
+      evitarCuando: "No usar en heridas secas o con muy poco exudado (puede resecar o adherirse); requiere apósito secundario.",
+      comoUsar: "Recortar o adaptar al tamaño del lecho/cavidad sin desbordar en exceso sobre piel sana y cubrir con apósito secundario adecuado."
+    },
+    {
+      id: "aquacel_ag",
+      nombre: "Aquacel Ag+ Extra (hidrofibra con plata iónica)",
+      categoria: "Apósitos",
+      coloquial: "“El Aquacel plata”, “la hidrofibra con plata”, “el de carga bacteriana/biopelícula”",
+      paraQue: "Manejo de heridas exudativas con signos de infección local, carga bacteriana elevada o sospecha de biopelícula.",
+      evitarCuando: "No combinar en la misma aplicación con enzimas proteolíticas (como colagenasa) ni mantener de forma indefinida sin reevaluar.",
+      comoUsar: "Aplicar sobre el lecho limpio cubriendo un margen perilesional prudente y asociar apósito secundario si el exudado lo requiere."
+    },
+    {
+      id: "biatain_alginate_ag",
+      nombre: "Biatain Alginate Ag (alginato con plata)",
+      categoria: "Antisépticos / Plata",
+      coloquial: "“El Biatain plata”, “el alginato con plata”, “el 10x10 de plata”",
+      paraQue: "Combinar absorción de exudado en heridas exudativas con acción antimicrobiana de plata ante carga bacteriana o riesgo de infección local (p. ej. 10 x 10 cm).",
+      evitarCuando: "No usar en heridas secas ni mezclar en la misma aplicación con enzimas desbridantes que queden inactivadas por la plata.",
+      comoUsar: "Adaptar al lecho de la herida, cubrir con apósito secundario y reevaluar evolución de exudado y signos locales."
+    },
+    {
+      id: "silvederma",
+      nombre: "Silvederma 10 mg/g crema (sulfadiazina argéntica)",
+      categoria: "Antisépticos / Plata",
+      coloquial: "“La Silvederma”, “la crema de plata”, “la de quemaduras”",
+      paraQue: "Prevención y tratamiento de infección tópica en quemaduras y lesiones cutáneas seleccionadas según indicación y protocolo.",
+      evitarCuando: "Evitar en situaciones de hipersensibilidad a sulfamidas/plata o en combinación directa con enzimas desbridantes.",
+      comoUsar: "Aplicar en capa fina sobre la superficie limpia según pauta y revisar periódicamente el estado de la piel y el lecho."
+    },
+    {
+      id: "rym_cicatrizante",
+      nombre: "RYM Cicatrizante (crema/gel tópico de apoyo)",
+      categoria: "Bordes y piel",
+      coloquial: "“El RYM”, “la crema cicatrizante”, “el tubito rosado”",
+      paraQue: "Apoyo tópico en fases de cicatrización/epitelización o cuidado cutáneo según indicación del producto y protocolo.",
+      evitarCuando: "Evitar aplicar sobre heridas infectadas sin control o mezclar con productos incompatibles si no está indicado.",
+      comoUsar: "Aplicar sobre la zona limpia y seca indicada, siguiendo las instrucciones del envase y la valoración clínica."
+    },
     {
       id: "colagenasa",
       nombre: "Colagenasa (desbridante enzimático)",
@@ -362,16 +412,25 @@
       coloquial: "“La pomada que come el tejido muerto”, “pomada enzimática”, “la de los esfacelos”",
       paraQue: "Favorecer el desbridamiento enzimático de tejido necrótico o esfacelado.",
       evitarCuando: "No mezclar con plata, yodo ni otros antisépticos o enzimas que la inactiven/desnaturalicen.",
-      comoUsar: "Limpiar previamente con suero fisiológico. Aplicar sobre tejido desvitalizado evitando invadir piel sana; mantener humedad adecuada."
+      comoUsar: "Limpiar previamente con suero fisiológico o solución limpiadora compatible. Aplicar sobre tejido desvitalizado evitando invadir piel sana; mantener humedad adecuada."
     },
     {
-      id: "plata",
-      nombre: "Apósitos / soluciones con plata iónica",
+      id: "solucion_limpiadora",
+      nombre: "Solución limpiadora / pulverizador de curas",
+      categoria: "Apósitos",
+      coloquial: "“El spray de lavar”, “el limpiador de heridas”, “el pulverizador”",
+      paraQue: "Arrastre mecánico suave de restos, exudado o detritos en el lecho de la herida antes de aplicar el tratamiento.",
+      evitarCuando: "No confundir con antisépticos cáusticos ni con alcoholes de alta graduación en herida abierta.",
+      comoUsar: "Irrigar o pulverizar según protocolo del centro y secar con suavidad antes de colocar el apósito o producto indicado."
+    },
+    {
+      id: "alcohol_96",
+      nombre: "Alcohol de 96° (antiséptico de piel íntegra / material)",
       categoria: "Antisépticos / Plata",
-      coloquial: "“El apósito de plata”, “la plata”, “el de carga bacteriana”",
-      paraQue: "Control de carga bacteriana local o signos de infección local en heridas seleccionadas.",
-      evitarCuando: "No combinar en la misma aplicación con enzimas proteolíticas como la colagenasa (inactiva su acción).",
-      comoUsar: "Aplicar según indicación del apósito asegurando contacto con el lecho de la herida; reevaluar periódicamente."
+      coloquial: "“El alcohol de 96”, “el de la botella morada”, “el alcohol”",
+      paraQue: "Antisepsia de piel íntegra en procedimientos puntuales o limpieza/desinfección externa según protocolo.",
+      evitarCuando: "No aplicar sobre heridas abiertas, lechos ulcerosos ni tejido de granulación (irrita, deshidrata y daña el tejido viable).",
+      comoUsar: "Reservar para usos indicados en piel intacta o superficies/materiales; en heridas abiertas emplear limpieza suave y apósitos adecuados."
     },
     {
       id: "yodo",
@@ -380,7 +439,7 @@
       coloquial: "“El yodo”, “la povidona”, “el antiséptico”",
       paraQue: "Antisepsia tópica puntual según protocolo y tipo de lesión.",
       evitarCuando: "Evitar uso simultáneo con colagenasa (puede desnaturalizarla e inhibir su efecto).",
-      comoUsar: "Si se ha usado antiséptico, limpiar/irrigar con suero fisiológico antes de aplicar enzimas o apósitos activos."
+      comoUsar: "Si se ha usado antiséptico, limpiar/irrigar con suero fisiológico o solución limpiadora antes de aplicar enzimas o apósitos activos."
     },
     {
       id: "enzimas_otras",
@@ -390,15 +449,6 @@
       paraQue: "Apoyo en la limpieza enzimática del lecho con tejido no viable.",
       evitarCuando: "No mezclar en la misma aplicación con plata ni antisépticos incompatibles.",
       comoUsar: "Aplicar sobre el lecho limpio tras irrigación; si se alterna con plata, separar tiempos con limpieza intermedia."
-    },
-    {
-      id: "apositos_activos",
-      nombre: "Apósitos activos (espumas, hidrocoloides, alginatos, hidrogeles)",
-      categoria: "Apósitos",
-      coloquial: "“La espuma”, “el apósito blando”, “la placa”, “el que chupa exudado”, “el que hidrata”",
-      paraQue: "Gestionar exudado, mantener ambiente húmedo o aportar hidratación según el tipo de apósito.",
-      evitarCuando: "Evitar ponerlos encima de pomadas grasas o densas que creen barrera e impidan su función.",
-      comoUsar: "Colocar sobre herida limpia y adecuada al nivel de exudado, sin capas grasas interpuestas salvo indicación específica de bordes."
     },
     {
       id: "pomadas_grasas",
@@ -411,35 +461,69 @@
     }
   ];
 
-  // Reglas basadas en la tabla de incompatibilidades aportada
   const REGLAS_INCOMPATIBILIDAD = [
     {
       a: "colagenasa",
-      b: "plata",
-      titulo: "Colagenasa + Plata",
-      efecto: "La plata inactiva la enzima colagenasa, anulando su efecto desbridante.",
-      alternativa: "Usar colagenasa sola o con apósitos no antimicrobianos. Si se necesita plata, aplicar en tiempos separados."
+      b: "aquacel_ag",
+      titulo: "Colagenasa + Aquacel Ag+ (Plata)",
+      efecto: "La plata iónica inactiva la enzima colagenasa y reduce o anula su acción desbridante.",
+      alternativa: "No mezclar en la misma cura. Elegir el abordaje prioritario o separar tiempos con limpieza intermedia."
+    },
+    {
+      a: "colagenasa",
+      b: "biatain_alginate_ag",
+      titulo: "Colagenasa + Biatain Alginate Ag",
+      efecto: "La plata desactiva la colagenasa, impidiendo el desbridamiento enzimático efectivo.",
+      alternativa: "Aplicar colagenasa con apósito no antimicrobiano o usar alginato/plata en pauta separada según indicación."
+    },
+    {
+      a: "colagenasa",
+      b: "silvederma",
+      titulo: "Colagenasa + Silvederma (Plata)",
+      efecto: "La plata de la sulfadiazina argéntica inactiva la colagenasa.",
+      alternativa: "Evitar su aplicación conjunta en el mismo tiempo de cura."
     },
     {
       a: "colagenasa",
       b: "yodo",
       titulo: "Colagenasa + Yodo",
       efecto: "El yodo, al igual que otros antisépticos, puede desnaturalizar la colagenasa e inhibir su acción.",
-      alternativa: "Evitar el uso simultáneo. Limpiar la herida con suero fisiológico antes de aplicar colagenasa."
+      alternativa: "Evitar el uso simultáneo. Limpiar la herida con suero fisiológico o solución limpiadora antes de aplicar colagenasa."
     },
     {
-      a: "plata",
+      a: "aquacel_ag",
       b: "enzimas_otras",
-      titulo: "Apósitos de plata + Enzimas",
-      efecto: "Los iones de plata desactivan las enzimas proteolíticas (como la colagenasa) presentes en otros desbridantes.",
-      alternativa: "No combinar en la misma aplicación. Alternar los tratamientos si ambos son necesarios, con limpieza intermedia."
+      titulo: "Plata (Aquacel Ag+) + Enzimas",
+      efecto: "Los iones de plata desactivan las enzimas proteolíticas presentes en desbridantes enzimáticos.",
+      alternativa: "No combinar en la misma aplicación. Alternar si ambos son necesarios, con limpieza intermedia."
     },
     {
-      a: "apositos_activos",
+      a: "biatain_alginate_ag",
+      b: "enzimas_otras",
+      titulo: "Biatain Alginate Ag + Enzimas",
+      efecto: "La plata inactiva las enzimas desbridantes si se aplican conjuntamente.",
+      alternativa: "Evitar la mezcla directa y respetar tiempos y lavados según protocolo."
+    },
+    {
+      a: "allevyn_life",
       b: "pomadas_grasas",
-      titulo: "Apósitos activos + Pomadas",
-      efecto: "Las pomadas grasas o densas pueden crear una barrera que impide el contacto del apósito activo con la herida.",
-      alternativa: "Aplicar apósitos activos sobre la herida limpia, sin barreras de pomadas, a menos que se indique lo contrario para bordes."
+      titulo: "Allevyn Life + Pomadas grasas / barrera",
+      efecto: "Las pomadas grasas o densas pueden restar adherencia al borde o dificultar la absorción del apósito.",
+      alternativa: "Mantener la zona de adherencia limpia y seca; aplicar barreras solo donde corresponda sin invadir el área de contacto."
+    },
+    {
+      a: "alginato",
+      b: "pomadas_grasas",
+      titulo: "Alginato + Pomadas grasas / densas",
+      efecto: "Las pomadas grasas o densas pueden crear una barrera que impide la absorción y gelificación adecuada del alginato.",
+      alternativa: "Aplicar el alginato sobre el lecho limpio sin capas grasas interpuestas."
+    },
+    {
+      a: "alcohol_96",
+      b: "allevyn_life",
+      titulo: "Alcohol 96° + Herida / Apósito (Allevyn Life)",
+      efecto: "El alcohol de 96° irrita y daña tejidos abiertos y puede alterar la piel perilesional antes de colocar el apósito.",
+      alternativa: "Evitar alcohol de 96° en heridas abiertas; limpiar suavemente y proteger la piel perilesional."
     }
   ];
 
@@ -447,23 +531,19 @@
     {
       titulo: "Tejido necrótico o esfacelo",
       coloquial: "“Costra negra/seca o telilla amarilla/blanca pegada”",
-      enfoque: "Limpieza con suero fisiológico y valoración de desbridamiento (enzimático, autolítico o cortante según criterio y capacitación). Revisar compatibilidades antes de añadir plata o yodo."
+      enfoque: "Limpieza con suero fisiológico o solución limpiadora compatible y valoración de desbridamiento (enzimático, autolítico o cortante según criterio y capacitación). Evitar mezclar desbridantes enzimáticos con plata o yodo."
     },
     {
-      titulo: "Exudado abundante o piel perilesional macerada",
-      coloquial: "“Supura mucho o la piel de alrededor está blanca/reblandecida”",
-      enfoque: "Priorizar gestión del exudado y protección de la piel perilesional. Evitar que el exceso de humedad macere los bordes y no interponer barreras grasas donde no corresponda."
+      titulo: "Exudado moderado/abundante o carga bacteriana",
+      coloquial: "“Supura bastante, huele/molesta o los bordes se reblandecen”",
+      enfoque: "Gestionar el exudado con apósitos absorbentes (como Allevyn Life o alginatos) y valorar plata (Aquacel Ag+ o Biatain Alginate Ag) si hay signos de infección local/carga bacteriana, cuidando la piel perilesional."
     },
     {
-      titulo: "Lecho limpio en granulación",
-      coloquial: "“Rojo limpio, granulado y con poco exudado”",
-      enfoque: "Mantener ambiente húmedo equilibrado y proteger el tejido neoformado sin agresiones ni mezclas innecesarias."
+      titulo: "Quemadura o piel sensibilizada / cicatrización",
+      coloquial: "“Quemadura, piel irritada o fase final de cierre”",
+      enfoque: "Valorar el estado de la piel y el protocolo indicado: Silvederma en indicaciones seleccionadas de quemadura/infección tópica, RYM Cicatrizante en fase de apoyo a la cicatrización y nunca alcohol de 96° sobre herida abierta."
     }
   ];
-
-  /* =========================================================================
-     LÓGICA DE INTERFAZ (Reutilizable y extensible para futuros módulos)
-     ========================================================================= */
 
   let catActiva = "Todos";
 
