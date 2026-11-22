@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#020617">
-<title>Guía Rápida de Curas · Enfermería</title>
+<title>Guía Rápida de Curas y Medicación · Enfermería</title>
 <style>
   :root {
     --bg: #0f172a;
@@ -64,7 +64,7 @@
   }
   nav {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 6px;
     padding: 10px 12px;
     background: #0b1220;
@@ -79,7 +79,7 @@
     border: 1px solid var(--border);
     border-radius: 10px;
     padding: 9px 6px;
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     font-weight: 700;
     cursor: pointer;
     text-align: center;
@@ -104,7 +104,7 @@
     font-size: 0.96rem;
     color: var(--accent);
   }
-  .search-box {
+  .search-box, .num-box {
     width: 100%;
     background: #0f172a;
     border: 1px solid var(--border);
@@ -113,6 +113,12 @@
     padding: 10px 12px;
     font-size: 0.88rem;
     margin-bottom: 8px;
+  }
+  .med-controls {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 8px;
+    margin-bottom: 10px;
   }
   .filter-row {
     display: flex;
@@ -167,6 +173,12 @@
     font-size: 0.8rem;
     color: #fde68a;
     margin-top: 4px;
+  }
+  .calc-line {
+    margin-top: 6px;
+    font-size: 0.84rem;
+    color: #fde68a;
+    font-weight: 700;
   }
   .detail-list {
     margin: 8px 0 0;
@@ -288,22 +300,22 @@
 
 <header>
   <div class="title-row">
-    <h1>GUÍA RÁPIDA DE CURAS</h1>
-    <span class="badge">TÉCNICO · COLOQUIAL</span>
+    <h1>GUÍA RÁPIDA DE CURAS Y MEDICACIÓN</h1>
+    <span class="badge">OFFLINE · LOCAL</span>
   </div>
-  <div class="sub">Consulta rápida de productos, uso y compatibilidades</div>
+  <div class="sub">Productos de cura, mezclas, heridas y 10 fármacos de urgencias</div>
 </header>
 
 <nav>
   <button class="tab-btn active" onclick="showTab('catalogo', this)">1. Productos</button>
   <button class="tab-btn" onclick="showTab('mezclas', this)">2. Mezclas</button>
   <button class="tab-btn" onclick="showTab('heridas', this)">3. Heridas</button>
+  <button class="tab-btn" onclick="showTab('medicacion', this)">4. Fármacos</button>
 </nav>
 
 <div id="toast" class="toast">Copiado al portapapeles</div>
 
 <main>
-  <!-- MÓDULO 1: CATÁLOGO TÉCNICO + COLOQUIAL -->
   <section id="catalogo" class="section active">
     <div class="card">
       <h2>Buscar por término técnico o coloquial</h2>
@@ -313,7 +325,6 @@
     </div>
   </section>
 
-  <!-- MÓDULO 2: COMPROBADOR DE MEZCLAS E INCOMPATIBILIDADES -->
   <section id="mezclas" class="section">
     <div class="card">
       <h2>¿Se pueden poner juntos? (Comprobador rápido)</h2>
@@ -330,18 +341,28 @@
     </div>
   </section>
 
-  <!-- MÓDULO 3: ORIENTACIÓN POR TIPO DE HERIDA -->
   <section id="heridas" class="section">
     <div class="card">
       <h2>Orientación rápida según lo que ves</h2>
       <div id="lista-heridas"></div>
     </div>
   </section>
+
+  <section id="medicacion" class="section">
+    <div class="card">
+      <h2>10 medicamentos habituales en urgencias (cálculo por peso)</h2>
+      <div class="med-controls">
+        <input type="number" id="peso-kg" class="num-box" placeholder="Peso (kg)" step="0.5" min="0.5" oninput="renderMedicacion()">
+        <input type="text" id="buscar-med" class="search-box" placeholder="Filtrar fármaco, jarabe, jeringa, crisis..." oninput="renderMedicacion()">
+      </div>
+      <div id="lista-medicacion"></div>
+    </div>
+  </section>
 </main>
 
 <div class="bottom-bar">
   <div class="bar-inner">
-    <input type="text" id="nota-cura" placeholder="Nota rápida de cura (ej: limpieza + desbridante + apósito)..." oninput="saveNota()">
+    <input type="text" id="nota-cura" placeholder="Nota rápida de cura o medicación..." oninput="saveNota()">
     <button class="btn-mini" onclick="copyNota()">Copiar</button>
     <button class="btn-mini sec" onclick="clearNota()">Limpiar</button>
   </div>
@@ -545,6 +566,110 @@
     }
   ];
 
+  const MEDICAMENTOS = [
+    {
+      nombre: "Paracetamol",
+      via: "VO / IV / RECT",
+      uso: "Fiebre y dolor · Solución oral / jeringa o adulto",
+      mult: 15,
+      max: 1000,
+      unidad: "mg",
+      formulaTexto: "15 mg/kg (máx 1000 mg/toma)",
+      nota: "Comprobar mililitros según concentración de la solución oral/jarabe o pauta habitual de adulto."
+    },
+    {
+      nombre: "Ibuprofeno",
+      via: "VO",
+      uso: "Fiebre y dolor inflamatorio · Suspensión / comprimidos",
+      mult: 10,
+      max: 400,
+      unidad: "mg",
+      formulaTexto: "10 mg/kg (máx 400 mg/toma)",
+      nota: "Medir con jeringa según concentración del envase; en adultos habitual 400-600 mg según pauta."
+    },
+    {
+      nombre: "Dexametasona",
+      via: "VO / IM / IV",
+      uso: "Laringitis / edema vía aérea · Solución/jarabe con jeringa",
+      mult: 0.6,
+      max: 12,
+      unidad: "mg",
+      formulaTexto: "0.6 mg/kg (tope habitual 12 mg)",
+      nota: "Muy habitual en solución/jarabe dosificado con jeringa según peso (p. ej. 1-2 ml según concentración y peso); verificar envase."
+    },
+    {
+      nombre: "Prednisolona",
+      via: "VO",
+      uso: "Broncoespasmo / crisis asmática · Solución oral",
+      mult: 1,
+      max: 40,
+      unidad: "mg",
+      formulaTexto: "1 mg/kg (tope habitual 40 mg)",
+      nota: "Ajustar volumen/gotas según concentración de solución oral y protocolo vigente."
+    },
+    {
+      nombre: "Ondansetrón",
+      via: "VO / IV",
+      uso: "Vómitos / GEA · Solución/jarabe con jeringa o ampolla",
+      mult: 0.15,
+      max: 8,
+      unidad: "mg",
+      formulaTexto: "0.15 mg/kg (máx 8 mg)",
+      nota: "En solución oral medir con jeringa según concentración y comprobar tolerancia antes de forzar líquidos."
+    },
+    {
+      nombre: "Salbutamol",
+      via: "INH / NEB",
+      uso: "Crisis asmática / broncoespasmo · Cámara o nebulización",
+      mult: 0.15,
+      min: 1.25,
+      max: 5,
+      unidad: "mg",
+      formulaTexto: "Nebulizado orientativo 0.15 mg/kg (mín 1.25, máx 5 mg)",
+      nota: "Inhalador con cámara espaciadora o nebulización según gravedad y protocolo de urgencias."
+    },
+    {
+      nombre: "Adrenalina",
+      via: "IM",
+      uso: "Anafilaxia · Cara anterolateral del muslo",
+      mult: 0.01,
+      max: 0.5,
+      unidad: "mg",
+      formulaTexto: "0.01 mg/kg (máx 0.5 mg)",
+      nota: "En adultos habitual 0.3-0.5 mg IM; comprobar autoinyector o ampolla según protocolo."
+    },
+    {
+      nombre: "Amoxicilina-Clavulánico",
+      via: "VO",
+      uso: "Infecciones bacterianas seleccionadas · Suspensión / comp.",
+      mult: 25,
+      max: 875,
+      unidad: "mg",
+      formulaTexto: "25 mg/kg/dosis base (tope adulto 875 mg)",
+      nota: "Revisar pauta (cada 8h o cada 12h), concentración de suspensión y posología en adultos."
+    },
+    {
+      nombre: "Midazolam",
+      via: "BUC / IN / IV",
+      uso: "Crisis convulsiva aguda · Bucal / intranasal / IV",
+      mult: 0.2,
+      max: 10,
+      unidad: "mg",
+      formulaTexto: "Bucal/IN orientativo 0.2 mg/kg (máx 10 mg)",
+      nota: "Vigilar vía aérea y saturación; comprobar presentación y protocolo del botiquín."
+    },
+    {
+      nombre: "Metoclopramida",
+      via: "VO / IM / IV",
+      uso: "Náuseas y vómitos · Uso habitual en adultos",
+      mult: 0.1,
+      max: 10,
+      unidad: "mg",
+      formulaTexto: "0.1 mg/kg (máx 10 mg)",
+      nota: "Precaución en población joven/infantil y vigilancia de efectos extrapiramidales."
+    }
+  ];
+
   let catActiva = "Todos";
 
   function showTab(id, btn) {
@@ -657,6 +782,45 @@
     `).join('');
   }
 
+  function calcularDosisTexto(med, kg) {
+    if (!kg || kg <= 0) return "Introduce el peso para calcular";
+    let val = kg * med.mult;
+    if (med.min !== undefined && val < med.min) val = med.min;
+    if (med.max !== undefined && val > med.max) val = med.max;
+    const num = Number.isInteger(val) ? val : Number(val.toFixed(2));
+    return `${num} ${med.unidad}`;
+  }
+
+  function renderMedicacion() {
+    const kg = parseFloat(document.getElementById('peso-kg').value);
+    const q = (document.getElementById('buscar-med').value || '').toLowerCase().trim();
+    const cont = document.getElementById('lista-medicacion');
+
+    const filtrados = MEDICAMENTOS.filter(m => {
+      const texto = `${m.nombre} ${m.via} ${m.uso} ${m.formulaTexto} ${m.nota}`.toLowerCase();
+      return !q || texto.includes(q);
+    });
+
+    if (!filtrados.length) {
+      cont.innerHTML = '<div class="alert alert-amber"><strong>Sin coincidencias</strong>Prueba con otro fármaco o palabra clave.</div>';
+      return;
+    }
+
+    cont.innerHTML = filtrados.map(m => `
+      <div class="item-card">
+        <div class="item-top">
+          <div class="item-title">${m.nombre}</div>
+          <span class="item-cat">${m.via}</span>
+        </div>
+        <div class="coloquial">${m.uso}</div>
+        <div class="calc-line">Cálculo (${m.formulaTexto}): ${calcularDosisTexto(m, kg)}</div>
+        <ul class="detail-list">
+          <li><strong>Nota práctica:</strong> ${m.nota}</li>
+        </ul>
+      </div>
+    `).join('');
+  }
+
   function toast(msg) {
     const t = document.getElementById('toast');
     t.textContent = msg;
@@ -685,6 +849,7 @@
     initMixSelects();
     renderReglas();
     renderHeridas();
+    renderMedicacion();
     document.getElementById('nota-cura').value = localStorage.getItem('curas_nota') || '';
   };
 </script>
