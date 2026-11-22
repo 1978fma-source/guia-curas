@@ -13,8 +13,7 @@
     --text: #f8fafc;
     --muted: #94a3b8;
     --accent: #38bdf8;
-    --green: #22c55e;
-    --green-bg: rgba(34, 197, 94, 0.16);
+    --blue-bg: rgba(56, 189, 248, 0.14);
     --amber: #f59e0b;
     --amber-bg: rgba(245, 158, 11, 0.16);
     --red: #ef4444;
@@ -64,7 +63,7 @@
   }
   nav {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 6px;
     padding: 10px 12px;
     background: #0b1220;
@@ -78,11 +77,14 @@
     color: var(--muted);
     border: 1px solid var(--border);
     border-radius: 10px;
-    padding: 9px 6px;
-    font-size: 0.78rem;
+    padding: 9px 4px;
+    font-size: 0.76rem;
     font-weight: 700;
     cursor: pointer;
     text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .tab-btn.active {
     background: var(--accent);
@@ -212,7 +214,7 @@
     line-height: 1.42;
     border: 1px solid;
   }
-  .alert-green { background: var(--green-bg); border-color: var(--green); color: #dcfce7; }
+  .alert-info { background: var(--blue-bg); border-color: var(--accent); color: #e0f2fe; }
   .alert-amber { background: var(--amber-bg); border-color: var(--amber); color: #fef3c7; }
   .alert-red { background: var(--red-bg); border-color: var(--red); color: #fee2e2; }
   .alert strong { display: block; font-size: 0.9rem; margin-bottom: 4px; }
@@ -237,7 +239,7 @@
   }
   .rule-alt {
     font-size: 0.81rem;
-    color: #86efac;
+    color: #93c5fd;
     line-height: 1.4;
   }
   .bottom-bar {
@@ -285,7 +287,7 @@
     top: 72px;
     left: 50%;
     transform: translateX(-50%);
-    background: var(--green);
+    background: var(--accent);
     color: #020617;
     font-weight: 800;
     font-size: 0.82rem;
@@ -419,12 +421,12 @@
     },
     {
       id: "rym_cicatrizante",
-      nombre: "RYM Cicatrizante (crema/gel tópico de apoyo)",
+      nombre: "RYM Cicatrizante (producto tópico de apoyo)",
       categoria: "Bordes y piel",
       coloquial: "“El RYM”, “la crema cicatrizante”, “el tubito rosado”",
-      paraQue: "Apoyo tópico en fases de cicatrización/epitelización o cuidado cutáneo según indicación del producto y protocolo.",
-      evitarCuando: "Evitar aplicar sobre heridas infectadas sin control o mezclar con productos incompatibles si no está indicado.",
-      comoUsar: "Aplicar sobre la zona limpia y seca indicada, siguiendo las instrucciones del envase y la valoración clínica."
+      paraQue: "Apoyo tópico en fases de cicatrización/epitelización o cuidado cutáneo según indicación del envase y protocolo.",
+      evitarCuando: "Verificar siempre la composición exacta del envase y su compatibilidad con apósitos activos, plata o desbridantes antes de combinar.",
+      comoUsar: "Aplicar sobre la zona limpia y adecuada según las instrucciones del producto y la valoración clínica."
     },
     {
       id: "colagenasa",
@@ -747,14 +749,14 @@
         <div class="alert alert-red">
           <strong>INCOMPATIBILIDAD / PRECAUCIÓN: ${regla.titulo}</strong>
           <div>${regla.efecto}</div>
-          <div style="margin-top:6px;"><strong>Alternativa correcta:</strong> ${regla.alternativa}</div>
+          <div style="margin-top:6px;"><strong>Alternativa:</strong> ${regla.alternativa}</div>
         </div>
       `;
     } else {
       res.innerHTML = `
-        <div class="alert alert-green">
-          <strong>Sin incompatibilidad registrada en esta tabla</strong>
-          Revisa siempre las indicaciones del fabricante y la valoración clínica de la herida antes de aplicar.
+        <div class="alert alert-info">
+          <strong>Sin regla de incompatibilidad registrada en esta tabla</strong>
+          No implica confirmación automática de compatibilidad en cualquier situación: revisa composición, fase de la herida y protocolo antes de aplicar.
         </div>
       `;
     }
@@ -765,7 +767,7 @@
       <div class="rule-box">
         <div class="rule-pair">${r.titulo}</div>
         <div class="rule-text"><strong>Efecto:</strong> ${r.efecto}</div>
-        <div class="rule-alt"><strong>Alternativa correcta:</strong> ${r.alternativa}</div>
+        <div class="rule-alt"><strong>Alternativa:</strong> ${r.alternativa}</div>
       </div>
     `).join('');
   }
